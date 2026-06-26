@@ -16,5 +16,5 @@ class note_response(BaseModel):
     content: str
     priority: Literal["high", "low", "medium"] = "low"
     date: datetime
-    id: str
+    model_config = { "from_attributes": True}
 
