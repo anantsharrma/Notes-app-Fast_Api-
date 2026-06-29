@@ -11,16 +11,16 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
-@app.post("/create_note")
+@app.post("/note", response_model=note_response, status_code=201)
 async def Create_note(
         note: Create_note,
         session: AsyncSession = Depends(get_async_session),
 ):
     new_note= Note(
         heading= note.heading,
+        title=note.title,
         content= note.content,
         priority= note.priority,
-        title= note.title,
         tags= note.tags
     )
     session.add(new_note)
@@ -38,3 +38,4 @@ async def get_notes(
     )
     notes = result.scalars().all()
     return notes
+
