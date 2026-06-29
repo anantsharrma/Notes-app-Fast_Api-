@@ -18,3 +18,10 @@ class note_response(BaseModel):
     date: datetime
     model_config = { "from_attributes": True}
 
+class UpdateNote(BaseModel):
+    heading: str | None = None
+    title: str | None = None
+    content: str | None = None
+    priority: str | None = None
+    tags: list[str] | None = None
+
