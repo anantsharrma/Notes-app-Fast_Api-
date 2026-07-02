@@ -11,6 +11,7 @@ class Create_note(BaseModel):
 
 class note_response(BaseModel):
     heading: str
+    id: str
     title: str
     tags: list[str] = Field(default_factory=list)
     content: str
@@ -24,4 +25,17 @@ class UpdateNote(BaseModel):
     content: str | None = None
     priority: str | None = None
     tags: list[str] | None = None
+
+class CreateUser(BaseModel):
+    UserName: str
+    EmailId: str
+    Password: str
+
+class UserResponse(BaseModel):
+    user_name: str
+    email_id: str
+    user_id: str
+    model_config = { "from_attributes": True}
+
+
 

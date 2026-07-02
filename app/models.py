@@ -18,7 +18,26 @@ class Note(Base):
     date: Mapped[str] = mapped_column(DateTime, default=datetime.now)
     priority: Mapped[str] = mapped_column(String)
     tags: Mapped[list] = mapped_column(JSON)
-    
+
+class User(Base):
+    __tablename__ = "users"
+
+    user_id: Mapped[str] = mapped_column(
+        String,
+        primary_key=True,
+        default=lambda: str(uuid.uuid4())
+    )
+    email_id: Mapped[str] = mapped_column(
+        String,
+        unique= True
+    )
+    user_name: Mapped[str] = mapped_column(
+        String,
+        unique= True
+    )
+    password_hash: Mapped[str] = mapped_column(
+        String
+    )
 
 
 

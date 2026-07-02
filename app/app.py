@@ -1,10 +1,12 @@
 from fastapi import FastAPI, Depends, HTTPException
-from app.schemas import Create_note, note_response, UpdateNote
+from app.schemas import Create_note, note_response, UpdateNote, CreateUser, UserResponse
 from app.db import get_async_session, create_db_and_tables
-from app.models import Note
+from app.models import Note, User
 from sqlalchemy.ext.asyncio import AsyncSession
 from contextlib import asynccontextmanager
 from sqlalchemy import select
+from app.security import hash_password
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_db_and_tables()
@@ -78,6 +80,22 @@ async def update_note(
     await session.refresh(note)
     return note
 
+@app.post("/Register", response_model= UserResponse)
+
+async def CreateUser(
+        user: CreateUser,
+        session: AsyncSession = Depends(get_async_session),
+):
+    new_user = User(
+        email_id= user.EmailId,
+        user_name= user.UserName,
+        password_hash= hash_password(user.Password),
+
+    )
+    session.add(new_user)
+    await session.commit()
+    await session.refresh(new_user)
+    return new_user
 
 
 
