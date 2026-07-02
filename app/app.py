@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
-from app.schemas import Create_note, note_response, UpdateNote, CreateUser, UserResponse
+from app.schemas import Create_note, note_response, UpdateNote, CreateUser, UserResponse, LoginRequest
 from app.db import get_async_session, create_db_and_tables
 from app.models import Note, User
 from sqlalchemy.ext.asyncio import AsyncSession
 from contextlib import asynccontextmanager
 from sqlalchemy import select
-from app.security import hash_password
+from app.security import hash_password, verify_password
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -96,6 +96,20 @@ async def CreateUser(
     await session.commit()
     await session.refresh(new_user)
     return new_user
+
+@app.post("/login")
+async def login(
+        user: LoginRequest,
+        session: AsyncSession = Depends(get_async_session)
+):
+    result = await session.execute(
+        select(User).where((User.email_id == user.identifier) |
+                            (User.user_name == user.identifier)
+                           ))
+    db_user = result.scalar_one_or_none()
+    if user is None or not verify_password(user.password, db_user.password_hash ):
+        raise HTTPException(status_code=404, detail="Username or password is invalid ")
+
 
 
 

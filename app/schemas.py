@@ -37,5 +37,7 @@ class UserResponse(BaseModel):
     user_id: str
     model_config = { "from_attributes": True}
 
-
+class LoginRequest(BaseModel):
+    identifier: str
+    password: str
 
