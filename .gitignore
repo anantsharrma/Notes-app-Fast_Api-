@@ -5,8 +5,8 @@ build/
 dist/
 wheels/
 *.egg-info
-
-
+# Enviroment Variables
+.env
 #database
 notes.db
 #pycharm

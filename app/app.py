@@ -1,11 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi_users_db_sqlalchemy import access_token
+
 from app.schemas import Create_note, note_response, UpdateNote, CreateUser, UserResponse, LoginRequest
 from app.db import get_async_session, create_db_and_tables
 from app.models import Note, User
 from sqlalchemy.ext.asyncio import AsyncSession
 from contextlib import asynccontextmanager
 from sqlalchemy import select
-from app.security import hash_password, verify_password
+from app.security import hash_password, verify_password, get_access_token
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -109,7 +111,13 @@ async def login(
     db_user = result.scalar_one_or_none()
     if user is None or not verify_password(user.password, db_user.password_hash ):
         raise HTTPException(status_code=404, detail="Username or password is invalid ")
-
+    jwt = get_access_token(
+        {"sub": db_user.user_id}
+    )
+    return {
+        "token": jwt,
+        "token_type": "bearer",
+    }
 
 
 
